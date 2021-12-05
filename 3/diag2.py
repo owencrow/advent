@@ -1,13 +1,17 @@
 #!/usr/bin/env python3
 
-def diag(lines):
-    digits = len(lines[0])
-    for l in range(len(lines)):
-        lines[l] = int(f'0b{lines[l]}',2)
-        print(lines[l])
+def read_file(filename):
+    numbers = []
+    with open(filename) as f:
+        for index, line in enumerate(f):
+            digits = len(line.strip())
+            numbers.append(int(f'0b{line}',2))
+            print("Line {}: {} {} {}".format(index, line.strip(), numbers[index], digits))
+    return digits, numbers
+
+def diag2(filename):
+    (digits, numbers) = read_file(filename)
+    return digits, numbers
 
 if __name__ == "__main__":
-    with open("test-input.txt") as f:
-        lines = f.read()
-        lines = lines.splitlines()
-    print(diag(lines))
+    print(diag2('test-input.txt'))
