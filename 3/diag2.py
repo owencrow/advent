@@ -8,24 +8,44 @@ def read_file(filename):
         for index, line in enumerate(f):
             digits = len(line.strip())
             numbers.append(int(f'0b{line}',2))
-            print("Line {}: {} {} {}".format(index, line.strip(), numbers[index], digits))
+            #print("Line {}: {} {} {}".format(index, line.strip(), numbers[index], digits))
     return digits, numbers
 
-def split_on_bit(numbers, bit):
+def split_on_bit(maxn, minn, bit):
     c = int('0b1' + '0' * (bit - 1),2)
     split = [[],[]]
-    for num in numbers:
-        if num & c == c:
-            split[1].append(num)
+    if len(maxn) > 0:
+        for num in maxn:
+            if num & c == c:
+                split[1].append(num)
+            else:
+                split[0].append(num)
+        if len(split[1]) >= len(split[0]):
+            maxn = split[1]
         else:
-            split[0].append(num)
-    return split
+            maxn = split[0]
+    split = [[],[]]
+    if len(minn) > 0:
+        for num in minn:
+            if num & c == c:
+                print("adding 1: ", num)
+                split[1].append(num)
+            else:
+                print("adding 0: ", num)
+                split[0].append(num)
+        if len(split[0]) <= len(split[1]):
+            minn = split[0]
+        else:
+            minn = split[1]
+    return maxn, minn
 
 def diag2(filename):
     (digits, numbers) = read_file(filename)
-    split = [numbers, numbers]
-    split = split_on_bit(split, 0)
-    return digits, numbers, split
+    maxn = [*numbers]
+    minn = [*numbers]
+    for i in range(digits):
+        (maxn, minn) = split_on_bit(maxn, minn, i)
+    return digits, numbers, maxn, minn
 
 if __name__ == "__main__":
     pprint(diag2('test-input.txt'))
