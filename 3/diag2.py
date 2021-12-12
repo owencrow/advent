@@ -11,44 +11,48 @@ def read_file(filename):
             #print("Line {}: {} {} {}".format(index, line.strip(), numbers[index], digits))
     return digits, numbers
 
-def split_on_bit(maxn, minn, bit):
-    c = int('0b1' + '0' * (bit - 1),2)
+def split_on_bit(numbers, bit):
+    c = int('0b1' + '0' * bit,2)
     split = [[],[]]
-    if len(maxn) > 0:
-        for num in maxn:
-            if num & c == c:
-                split[1].append(num)
-            else:
-                split[0].append(num)
+    for num in numbers:
+        if num & c == c:
+            split[1].append(num)
+        else:
+            split[0].append(num)
+    return split
+
+def find_most(numbers, digits):
+    for i in reversed(range(digits)):
+        split = split_on_bit(numbers, i)
+        #pprint(split)
         if len(split[1]) >= len(split[0]):
-            maxn = split[1]
+            numbers = [*split[1]]
         else:
-            maxn = split[0]
-    split = [[],[]]
-    if len(minn) > 0:
-        for num in minn:
-            if num & c == c:
-                print("adding 1: ", num)
-                split[1].append(num)
-            else:
-                print("adding 0: ", num)
-                split[0].append(num)
-        if len(split[0]) <= len(split[1]):
-            minn = split[0]
+            numbers = [*split[0]]
+    return numbers
+
+def find_least(numbers, digits):
+    for i in reversed(range(digits)):
+        split = split_on_bit(numbers, i)
+        #pprint(split)
+        if len(split[1]) < len(split[0]):
+            numbers = [*split[1]]
         else:
-            minn = split[1]
-    return maxn, minn
+            numbers = [*split[0]]
+        if len(numbers) == 1:
+            break
+    return numbers
 
 def diag2(filename):
     (digits, numbers) = read_file(filename)
-    maxn = [*numbers]
-    minn = [*numbers]
-    for i in range(digits):
-        (maxn, minn) = split_on_bit(maxn, minn, i)
-    return digits, numbers, maxn, minn
+    most = find_most(numbers, digits)
+    least = find_least(numbers, digits)
+
+    return digits, numbers, most, least, most[0] * least[0]
 
 if __name__ == "__main__":
-    pprint(diag2('test-input.txt'))
+    #pprint(diag2('test-input.txt'))
+    pprint(diag2('input.txt'))
 
 # zeros == least
 # 00100
